@@ -4,21 +4,28 @@ import * as React from "react";
 import Link from "next/link";
 import {
   ArrowRightIcon,
+  ChevronRightIcon,
   CopyIcon,
   DownloadIcon,
-  ExternalLinkIcon,
   DotsHorizontalIcon,
+  ExternalLinkIcon,
   Pencil1Icon,
   PlusIcon,
   TrashIcon,
 } from "@radix-ui/react-icons";
 
-import { commissionHnl, formatDateISO, formatHnl, useLensia } from "@/lib/local-store";
+import {
+  commissionHnl,
+  formatDateISO,
+  formatHnl,
+  useLensia,
+  type LensiaEvent,
+  type OrderStatus,
+  type ProcessingStatus,
+} from "@/lib/local-store";
+import { cn } from "@/lib/utils";
 import { Topbar } from "@/components/shell/topbar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,49 +42,173 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-function statusLabel(status: string) {
-  if (status === "Listo") return "Listo";
-  if (status === "Procesando") return "Procesando";
-  if (status === "Subiendo") return "Subiendo";
-  if (status === "Con errores") return "Con errores";
-  return "Borrador";
+const STATUS_DOT: Record<ProcessingStatus, string> = {
+  Listo: "bg-emerald-500",
+  Procesando: "bg-amber-500",
+  Subiendo: "bg-sky-500",
+  "Con errores": "bg-red-500",
+  Borrador: "bg-zinc-300",
+};
+
+const ORDER_BADGE: Record<OrderStatus, string> = {
+  Pagado: "bg-emerald-50 text-emerald-700 ring-emerald-600/10",
+  Pendiente: "bg-amber-50 text-amber-700 ring-amber-600/10",
+  Entregado: "bg-zinc-100 text-zinc-700 ring-zinc-600/10",
+};
+
+function formatNumber(n: number) {
+  return n.toLocaleString("es-HN");
+}
+
+function KpiStat({
+  label,
+  value,
+  hint,
+}: {
+  label: string;
+  value: string;
+  hint?: string;
+}) {
+  return (
+    <div className="flex flex-col gap-1 py-1">
+      <p className="text-xs font-medium tracking-wide text-zinc-500 uppercase">{label}</p>
+      <p className="text-2xl font-semibold tracking-tight text-zinc-950 tabular-nums">{value}</p>
+      {hint ? <p className="text-xs text-zinc-500">{hint}</p> : null}
+    </div>
+  );
+}
+
+function EventRow({
+  event,
+  onDelete,
+  onCopyLink,
+}: {
+  event: LensiaEvent;
+  onDelete: (id: string) => void;
+  onCopyLink: (slug: string) => void;
+}) {
+  return (
+    <div className="group relative flex items-center gap-4 px-4 py-3 transition-colors hover:bg-zinc-50">
+      <span
+        aria-hidden
+        className={cn("size-2 shrink-0 rounded-full", STATUS_DOT[event.status])}
+      />
+
+      <Link
+        href={`/dashboard/events/${event.id}/upload`}
+        className="flex min-w-0 flex-1 items-center gap-4 focus-visible:outline-none"
+      >
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium text-zinc-950 underline-offset-4 decoration-zinc-300 group-hover:underline">
+            {event.name}
+          </p>
+          <p className="mt-0.5 truncate text-xs text-zinc-500">
+            <span className="sm:hidden">
+              {formatNumber(event.photosUploaded)} fotos · {formatNumber(event.orders)} órdenes
+            </span>
+            <span className="hidden sm:inline">
+              {event.city} · {formatDateISO(event.date)} · {event.type}
+            </span>
+          </p>
+        </div>
+
+        <div className="hidden items-center gap-5 text-right sm:flex">
+          <div className="w-16">
+            <p className="text-sm font-medium text-zinc-950 tabular-nums">
+              {formatNumber(event.photosUploaded)}
+            </p>
+            <p className="text-xs text-zinc-500">fotos</p>
+          </div>
+          <div className="w-16">
+            <p className="text-sm font-medium text-zinc-950 tabular-nums">
+              {formatNumber(event.orders)}
+            </p>
+            <p className="text-xs text-zinc-500">órdenes</p>
+          </div>
+          <ChevronRightIcon className="size-4 shrink-0 text-zinc-300 transition-colors group-hover:text-zinc-500" />
+        </div>
+      </Link>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            aria-label={`Acciones para ${event.name}`}
+            className="inline-flex size-8 items-center justify-center rounded-md text-zinc-400 opacity-0 transition-opacity hover:bg-zinc-100 hover:text-zinc-900 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:outline-none group-hover:opacity-100 data-[state=open]:opacity-100"
+          >
+            <DotsHorizontalIcon />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onSelect={() => onCopyLink(event.slug)}>
+            <CopyIcon />
+            <span className="ml-2">Copiar link</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => {}}>
+            <DownloadIcon />
+            <span className="ml-2">Descargar QR</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href={`/e/${event.slug}`}>
+              <ExternalLinkIcon />
+              <span className="ml-2">Ver público</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link href={`/dashboard/events/${event.id}/edit`}>
+              <Pencil1Icon />
+              <span className="ml-2">Editar</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => onDelete(event.id)}>
+            <TrashIcon />
+            <span className="ml-2">Borrar</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  );
 }
 
 export default function DashboardPage() {
-  const { events, orders, actions } = useLensia();
+  const { events, orders, users, session, actions } = useLensia();
   const [deleteId, setDeleteId] = React.useState<string | null>(null);
+
+  const me = users.find((u) => u.id === session.userId);
 
   const totals = React.useMemo(() => {
     return events.reduce(
       (acc, e) => {
         acc.photos += e.photosUploaded;
-        acc.searches += e.selfieSearches;
         acc.orders += e.orders;
         acc.gross += e.revenueGrossHnl;
         return acc;
       },
-      { photos: 0, searches: 0, orders: 0, gross: 0 }
+      { photos: 0, orders: 0, gross: 0 }
     );
   }, [events]);
 
-  const fee = commissionHnl(totals.gross);
-  const net = Math.max(0, totals.gross - fee);
+  const net = Math.max(0, totals.gross - commissionHnl(totals.gross));
+  const recentEvents = events.slice(0, 5);
+  const recentOrders = orders.slice(0, 4);
 
-  async function onCopyPublicLink(slug: string) {
-    const url = `${window.location.origin}/e/${slug}`;
+  const onCopyPublicLink = React.useCallback(async (slug: string) => {
     try {
+      const url = `${window.location.origin}/e/${slug}`;
       await navigator.clipboard.writeText(url);
     } catch {
       // ignore
     }
-  }
+  }, []);
 
   return (
     <>
       <Topbar
-        title="Dashboard"
+        title="Inicio"
+        subtitle={me ? `Hola, ${me.name.split(" ")[0]}` : undefined}
         right={
-          <Button asChild>
+          <Button size="sm" asChild>
             <Link href="/dashboard/events/new">
               <PlusIcon /> Nuevo evento
             </Link>
@@ -85,212 +216,116 @@ export default function DashboardPage() {
         }
       />
 
-      <div className="w-full px-6 py-6">
-        <div className="grid gap-4 md:grid-cols-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Fotos subidas</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-semibold tracking-tight text-zinc-950">
-                {totals.photos.toLocaleString("es-HN")}
-              </p>
-              <p className="mt-1 text-sm text-zinc-700">En todos tus eventos</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Busquedas por selfie</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-semibold tracking-tight text-zinc-950">
-                {totals.searches.toLocaleString("es-HN")}
-              </p>
-              <p className="mt-1 text-sm text-zinc-700">Coincidencias por rostro</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Ventas / solicitudes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-semibold tracking-tight text-zinc-950">
-                {totals.orders.toLocaleString("es-HN")}
-              </p>
-              <p className="mt-1 text-sm text-zinc-700">Ordenes totales</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Ingresos (estimado)</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-semibold tracking-tight text-zinc-950">
-                {formatHnl(net)}
-              </p>
-              <p className="mt-1 text-sm text-zinc-700">
-                Bruto {formatHnl(totals.gross)} · Comision Lensia {formatHnl(fee)}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+      <div className="mx-auto w-full max-w-5xl px-6 py-10">
+        <section aria-labelledby="kpis" className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+          <h2 id="kpis" className="sr-only">
+            Resumen
+          </h2>
+          <KpiStat label="Eventos" value={formatNumber(events.length)} />
+          <KpiStat label="Fotos" value={formatNumber(totals.photos)} />
+          <KpiStat label="Órdenes" value={formatNumber(totals.orders)} />
+          <KpiStat
+            label="Neto"
+            value={formatHnl(net)}
+            hint={`Bruto ${formatHnl(totals.gross)}`}
+          />
+        </section>
 
-        <Tabs defaultValue="events" className="mt-8">
-          <TabsList>
-            <TabsTrigger value="events">Eventos</TabsTrigger>
-            <TabsTrigger value="orders">Ordenes</TabsTrigger>
-          </TabsList>
+        <section aria-labelledby="events-heading" className="mt-12">
+          <div className="flex items-end justify-between">
+            <h2
+              id="events-heading"
+              className="text-sm font-semibold tracking-tight text-zinc-950"
+            >
+              Eventos
+            </h2>
+            <Link
+              href="/dashboard/events/new"
+              className="inline-flex items-center gap-1 text-xs font-medium text-zinc-600 hover:text-zinc-950"
+            >
+              Crear nuevo <ArrowRightIcon className="size-3" />
+            </Link>
+          </div>
 
-          <TabsContent value="events">
-            <div className="grid gap-4 lg:grid-cols-2">
-              {events.map((e) => (
-                <Card key={e.id}>
-                  <CardHeader>
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="min-w-0">
-                        <CardTitle className="truncate">{e.name}</CardTitle>
-                        <p className="mt-1 text-sm text-zinc-700">
-                          {e.city} · {formatDateISO(e.date)} · {e.type} · {statusLabel(e.status)}
+          <div className="mt-3 overflow-hidden rounded-xl border border-zinc-200 bg-white">
+            {recentEvents.length === 0 ? (
+              <div className="flex flex-col items-center justify-center gap-3 px-6 py-12 text-center">
+                <p className="text-sm text-zinc-700">Aún no tienes eventos.</p>
+                <Button size="sm" asChild>
+                  <Link href="/dashboard/events/new">Crear mi primer evento</Link>
+                </Button>
+              </div>
+            ) : (
+              <ul className="divide-y divide-zinc-100">
+                {recentEvents.map((event) => (
+                  <li key={event.id}>
+                    <EventRow
+                      event={event}
+                      onDelete={setDeleteId}
+                      onCopyLink={onCopyPublicLink}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
+
+        <section aria-labelledby="orders-heading" className="mt-12">
+          <div className="flex items-end justify-between">
+            <h2
+              id="orders-heading"
+              className="text-sm font-semibold tracking-tight text-zinc-950"
+            >
+              Órdenes recientes
+            </h2>
+            {orders.length > recentOrders.length ? (
+              <span className="text-xs text-zinc-500">
+                Mostrando {recentOrders.length} de {orders.length}
+              </span>
+            ) : null}
+          </div>
+
+          <div className="mt-3 overflow-hidden rounded-xl border border-zinc-200 bg-white">
+            {recentOrders.length === 0 ? (
+              <div className="px-6 py-8 text-center text-sm text-zinc-500">
+                Cuando tus clientes compren fotos, aparecerán aquí.
+              </div>
+            ) : (
+              <ul className="divide-y divide-zinc-100">
+                {recentOrders.map((order) => (
+                  <li key={order.id}>
+                    <Link
+                      href={`/dashboard/orders/${order.id}`}
+                      className="group flex items-center gap-4 px-4 py-3 transition-colors hover:bg-zinc-50 focus-visible:outline-none"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-zinc-950 group-hover:underline underline-offset-4 decoration-zinc-300">
+                          {order.clientName}
+                        </p>
+                        <p className="mt-0.5 truncate text-xs text-zinc-500">
+                          {order.id} · {order.photoIds.length} fotos
                         </p>
                       </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <button
-                            type="button"
-                            className="inline-flex h-9 w-9 items-center justify-center text-zinc-950 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 focus-visible:ring-offset-white focus-visible:outline-none"
-                            aria-label="Acciones"
-                          >
-                            <DotsHorizontalIcon />
-                          </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onSelect={() => void onCopyPublicLink(e.slug)}>
-                            <CopyIcon />
-                            <span className="ml-2">Copiar link</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onSelect={() => {}}>
-                            <DownloadIcon />
-                            <span className="ml-2">Descargar QR</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem asChild>
-                            <Link href={`/dashboard/events/${e.id}/edit`}>
-                              <Pencil1Icon />
-                              <span className="ml-2">Editar</span>
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onSelect={() => setDeleteId(e.id)}>
-                            <TrashIcon />
-                            <span className="ml-2">Borrar</span>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid gap-3 sm:grid-cols-4">
-                      <div>
-                        <p className="text-xs text-zinc-500">Fotos</p>
-                        <p className="mt-1 text-sm font-semibold text-zinc-950">
-                          {e.photosUploaded.toLocaleString("es-HN")}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-zinc-500">Procesadas</p>
-                        <p className="mt-1 text-sm font-semibold text-zinc-950">
-                          {e.photosProcessed.toLocaleString("es-HN")}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-zinc-500">Selfies</p>
-                        <p className="mt-1 text-sm font-semibold text-zinc-950">
-                          {e.selfieSearches.toLocaleString("es-HN")}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-zinc-500">Ordenes</p>
-                        <p className="mt-1 text-sm font-semibold text-zinc-950">
-                          {e.orders.toLocaleString("es-HN")}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="mt-5 flex items-center gap-2">
-                      <div className="flex items-center gap-2">
-                        <Button asChild>
-                          <Link href={`/dashboard/events/${e.id}/upload`}>
-                            Subir fotos <ArrowRightIcon />
-                          </Link>
-                        </Button>
-                        <Button asChild variant="secondary">
-                          <Link href={`/e/${e.slug}`}>
-                            <ExternalLinkIcon /> Ver publico
-                          </Link>
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-
-              {events.length === 0 ? (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Sin eventos</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-zinc-700">
-                      Crea tu primer evento para publicar la galeria.
-                    </p>
-                    <div className="mt-4">
-                      <Button asChild>
-                        <Link href="/dashboard/events/new">Crear evento</Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ) : null}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="orders">
-            <div className="grid gap-4 lg:grid-cols-2">
-              {orders.map((o) => (
-                <Card key={o.id}>
-                  <CardHeader>
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <CardTitle>Orden {o.id}</CardTitle>
-                        <p className="mt-1 text-sm text-zinc-700">{o.clientName}</p>
-                      </div>
-                      <Badge
-                        variant={
-                          o.status === "Pagado"
-                            ? "success"
-                            : o.status === "Entregado"
-                              ? "neutral"
-                              : "warning"
-                        }
-                      >
-                        {o.status}
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm text-zinc-700">
-                        {o.photoIds.length} fotos · Total {formatHnl(o.grossTotalHnl)}
+                      <p className="hidden text-sm font-medium text-zinc-950 tabular-nums sm:block">
+                        {formatHnl(order.grossTotalHnl)}
                       </p>
-                      <Button asChild variant="secondary">
-                        <Link href={`/dashboard/orders/${o.id}`}>Ver detalle</Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-        </Tabs>
+                      <span
+                        className={cn(
+                          "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset",
+                          ORDER_BADGE[order.status]
+                        )}
+                      >
+                        {order.status}
+                      </span>
+                      <ChevronRightIcon className="size-4 shrink-0 text-zinc-300 transition-colors group-hover:text-zinc-500" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
       </div>
 
       <Dialog open={!!deleteId} onOpenChange={(o) => (!o ? setDeleteId(null) : null)}>
@@ -298,7 +333,7 @@ export default function DashboardPage() {
           <DialogHeader>
             <DialogTitle>Borrar evento</DialogTitle>
             <DialogDescription>
-              Se borraran tambien las fotos y ordenes asociadas guardadas localmente.
+              Se borrarán también las fotos y órdenes asociadas guardadas localmente.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

@@ -5,7 +5,6 @@ import { useState } from "react";
 import {
   ArrowRight,
   Building2,
-  Camera,
   CheckCircle,
   GraduationCap,
   Heart,
@@ -45,10 +44,10 @@ export default function LandingPage() {
               Cómo funciona
             </Link>
             <Link
-              href="#precios"
+              href="#comision"
               className="text-muted-foreground hover:text-foreground text-sm transition-colors"
             >
-              Precios
+              Comisión
             </Link>
             <Link
               href="#eventos"
@@ -85,8 +84,8 @@ export default function LandingPage() {
               <Link href="#como-funciona" className="text-muted-foreground text-sm">
                 Cómo funciona
               </Link>
-              <Link href="#precios" className="text-muted-foreground text-sm">
-                Precios
+              <Link href="#comision" className="text-muted-foreground text-sm">
+                Comisión
               </Link>
               <Link href="#eventos" className="text-muted-foreground text-sm">
                 Eventos
@@ -128,7 +127,7 @@ export default function LandingPage() {
               </Button>
             </div>
             <p className="text-muted-foreground mt-4 text-sm">
-              Sin tarjeta de crédito • Comisión del 20% por venta
+              Sin tarjeta de crédito • Sin suscripción
             </p>
           </div>
 
@@ -197,7 +196,7 @@ export default function LandingPage() {
             ].map((item) => (
               <Card key={item.step} className="border-border/50 bg-card relative overflow-hidden">
                 <CardContent className="p-8">
-                  <span className="text-muted/50 absolute top-6 right-6 text-6xl font-bold">
+                  <span className="text-muted absolute top-6 right-6 text-6xl font-bold">
                     {item.step}
                   </span>
                   <div className="bg-foreground mb-6 flex h-12 w-12 items-center justify-center rounded-xl">
@@ -245,7 +244,7 @@ export default function LandingPage() {
                   "Las selfies solo se usan para la búsqueda y se eliminan inmediatamente después.",
               },
               {
-                icon: Camera,
+                icon: QrCode,
                 title: "Tu marca, tu estilo",
                 description:
                   "Personaliza la galería con tu logo y colores. Los clientes te recuerdan.",
@@ -298,30 +297,67 @@ export default function LandingPage() {
                 icon: Trophy,
                 name: "Carreras y maratones",
                 example: "Carrera 10K San Pedro Sula",
+                tag: "Deporte",
+                tint: "from-emerald-500/15 via-transparent to-transparent dark:from-emerald-400/10",
+                iconBg: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-200",
               },
               {
                 icon: GraduationCap,
                 name: "Graduaciones",
                 example: "Graduación Unitec 2026",
+                tag: "Academia",
+                tint: "from-sky-500/15 via-transparent to-transparent dark:from-sky-400/10",
+                iconBg: "bg-sky-500/10 text-sky-700 dark:text-sky-200",
               },
               {
                 icon: Heart,
                 name: "Bodas y celebraciones",
                 example: "Boda Ana & Luis",
+                tag: "Social",
+                tint: "from-rose-500/15 via-transparent to-transparent dark:from-rose-400/10",
+                iconBg: "bg-rose-500/10 text-rose-700 dark:text-rose-200",
               },
               {
                 icon: Building2,
                 name: "Eventos corporativos",
                 example: "Conferencia TechHN 2026",
+                tag: "Marca",
+                tint: "from-violet-500/15 via-transparent to-transparent dark:from-violet-400/10",
+                iconBg: "bg-violet-500/10 text-violet-700 dark:text-violet-200",
               },
             ].map((event) => (
-              <Card key={event.name} className="border-border/50 bg-card">
-                <CardContent className="p-6">
-                  <div className="bg-muted mb-4 flex h-12 w-12 items-center justify-center rounded-xl">
-                    <event.icon className="text-foreground h-6 w-6" />
+              <Card
+                key={event.name}
+                className="group border-border/50 bg-card/70 hover:border-border relative overflow-hidden py-0 transition-all hover:-translate-y-0.5"
+              >
+                <div
+                  className={`pointer-events-none absolute -inset-px bg-gradient-to-br ${event.tint}`}
+                />
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(0,0,0,0.07)_1px,transparent_0)] [background-size:18px_18px] opacity-20 dark:opacity-10" />
+                <CardContent className="relative p-6">
+                  <div className="flex items-start justify-between gap-4">
+                    <div
+                      className={`border-border/60 flex h-12 w-12 items-center justify-center rounded-xl border ${event.iconBg}`}
+                    >
+                      <event.icon className="h-6 w-6" />
+                    </div>
+                    <Badge variant="outline" className="bg-background/60">
+                      {event.tag}
+                    </Badge>
                   </div>
-                  <h3 className="font-semibold">{event.name}</h3>
+                  <h3 className="mt-6 font-semibold">{event.name}</h3>
                   <p className="text-muted-foreground mt-1 text-sm">{event.example}</p>
+                  <div className="text-muted-foreground mt-6 flex items-center gap-2 text-xs">
+                    <span className="inline-flex items-center gap-2">
+                      <span className="bg-foreground/30 h-1.5 w-1.5 rounded-full" />
+                      Link compartible
+                    </span>
+                    <span className="bg-foreground/20 h-1 w-1 rounded-full" />
+                    <span className="inline-flex items-center gap-2">
+                      <span className="bg-foreground/30 h-1.5 w-1.5 rounded-full" />
+                      Venta por foto
+                    </span>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -344,16 +380,16 @@ export default function LandingPage() {
                       Tu privacidad es nuestra prioridad
                     </h2>
                     <p className="text-muted-foreground mt-4 leading-relaxed">
-                      Las selfies que suben las personas se usan únicamente para la búsqueda y se eliminan
-                      inmediatamente después. No almacenamos datos biométricos ni compartimos
-                      información con terceros.
+                      Las selfies que suben las personas se usan únicamente para la búsqueda y se
+                      eliminan inmediatamente después. No almacenamos datos biométricos ni
+                      compartimos información con terceros.
                     </p>
                     <ul className="mt-6 space-y-3">
                       {[
                         "Selfies eliminadas después de cada búsqueda",
-                        "Sin almacenamiento de datos biométricos",
-                        "Cumplimiento con regulaciones de privacidad",
-                        "Encriptación de extremo a extremo",
+                        "Uso limitado a la búsqueda en el evento",
+                        "No vendemos tu información",
+                        "Soporte para solicitudes de eliminación",
                       ].map((item) => (
                         <li key={item} className="flex items-center gap-3 text-sm">
                           <CheckCircle className="h-4 w-4 flex-shrink-0 text-green-600" />
@@ -377,78 +413,90 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing */}
-      <section id="precios" className="border-border/40 bg-muted/30 border-t py-24">
+      {/* Commission */}
+      <section id="comision" className="border-border/40 bg-muted/30 border-t py-24">
         <div className="mx-auto max-w-7xl px-6">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Precios simples y transparentes
+              Ganamos cuando tú ganas
             </h2>
             <p className="text-muted-foreground mt-4 text-lg">
-              Paga solo por lo que usas. Sin sorpresas ni compromisos.
+              No te cobramos nada adicional. Simplemente ganamos cuando tú vendes.
             </p>
           </div>
 
-          <div className="mx-auto mt-16 grid max-w-4xl gap-8 sm:grid-cols-2">
-            {/* Free Plan */}
+          <div className="mx-auto mt-16 grid max-w-4xl gap-8 lg:grid-cols-2">
             <Card className="border-border/50 bg-card">
               <CardContent className="p-8">
-                <h3 className="text-lg font-semibold">Gratis</h3>
-                <p className="text-muted-foreground mt-1 text-sm">Para probar la plataforma</p>
-                <div className="mt-6">
-                  <span className="text-4xl font-semibold">$0</span>
-                  <span className="text-muted-foreground">/mes</span>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-lg font-semibold">Comisión del 20%</h3>
+                    <p className="text-muted-foreground mt-1 text-sm">
+                      Tú defines el precio por foto. Nosotros tomamos el 20% de cada venta.
+                    </p>
+                  </div>
+                  <Badge className="bg-foreground text-background">20%</Badge>
                 </div>
+
+                <div className="border-border/60 bg-background/60 mt-6 rounded-xl border p-5">
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-muted-foreground text-sm">Ejemplo</span>
+                    <span className="text-muted-foreground text-sm">Por foto</span>
+                  </div>
+                  <div className="mt-3 grid grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <div className="text-muted-foreground">Precio</div>
+                      <div className="mt-1 font-semibold">$5.00</div>
+                    </div>
+                    <div>
+                      <div className="text-muted-foreground">Comisión</div>
+                      <div className="mt-1 font-semibold">$1.00</div>
+                    </div>
+                    <div>
+                      <div className="text-muted-foreground">Recibes</div>
+                      <div className="mt-1 font-semibold">$4.00</div>
+                    </div>
+                  </div>
+                </div>
+
                 <ul className="mt-8 space-y-3">
                   {[
-                    "Hasta 100 fotos por mes",
-                    "1 evento activo",
-                    "Búsqueda por selfie",
-                    "Link compartible",
-                    "Soporte por email",
-                  ].map((feature) => (
-                    <li key={feature} className="flex items-center gap-3 text-sm">
+                    "Sin suscripción ni contratos",
+                    "Sin costo de configuración",
+                    "Sin cobros extra por evento",
+                    "Te quedas con el control del precio",
+                  ].map((item) => (
+                    <li key={item} className="flex items-center gap-3 text-sm">
                       <CheckCircle className="h-4 w-4 flex-shrink-0 text-green-600" />
-                      <span>{feature}</span>
+                      <span>{item}</span>
                     </li>
                   ))}
                 </ul>
-                <Button variant="outline" className="mt-8 w-full" asChild>
-                  <Link href="/dashboard">Empezar gratis</Link>
-                </Button>
               </CardContent>
             </Card>
 
-            {/* Pro Plan */}
-            <Card className="border-foreground/20 bg-card relative shadow-xl">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <Badge className="bg-foreground text-background">Más popular</Badge>
-              </div>
+            <Card className="border-border/50 bg-card">
               <CardContent className="p-8">
-                <h3 className="text-lg font-semibold">Profesional</h3>
-                <p className="text-muted-foreground mt-1 text-sm">Para fotógrafos activos</p>
-                <div className="mt-6">
-                  <span className="text-4xl font-semibold">$29</span>
-                  <span className="text-muted-foreground">/mes</span>
+                <h3 className="text-lg font-semibold">Empieza hoy</h3>
+                <p className="text-muted-foreground mt-1 text-sm">
+                  Crea tu evento, sube tus fotos y comparte el link. Si hay ventas, nos va bien a
+                  ambos.
+                </p>
+                <div className="mt-8 grid gap-3">
+                  <Button asChild>
+                    <Link href="/dashboard">Crear mi primer evento</Link>
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <Link href="#como-funciona">Ver cómo funciona</Link>
+                  </Button>
                 </div>
-                <ul className="mt-8 space-y-3">
-                  {[
-                    "Fotos ilimitadas",
-                    "Eventos ilimitados",
-                    "Personalización de marca",
-                    "Código QR personalizado",
-                    "Estadísticas detalladas",
-                    "Soporte prioritario",
-                  ].map((feature) => (
-                    <li key={feature} className="flex items-center gap-3 text-sm">
-                      <CheckCircle className="h-4 w-4 flex-shrink-0 text-green-600" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Button className="mt-8 w-full" asChild>
-                  <Link href="/dashboard">Probar 14 días gratis</Link>
-                </Button>
+
+                <div className="border-border/60 bg-muted/40 mt-8 rounded-xl border p-5 text-sm">
+                  <div className="font-medium">Transparencia</div>
+                  <div className="text-muted-foreground mt-2">
+                    La comisión se aplica solo a ventas completadas. Si no vendes, no pagas.
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -463,7 +511,8 @@ export default function LandingPage() {
               Transforma la forma en que entregas fotos
             </h2>
             <p className="text-muted-foreground mt-4 text-lg">
-              Únete a cientos de fotógrafos que ya usan Lensia para vender más y trabajar menos.
+              Convierte tus galerías en una experiencia rápida para tus clientes y en ventas para
+              ti.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button size="lg" asChild>
@@ -484,17 +533,17 @@ export default function LandingPage() {
       <footer className="border-border/40 bg-muted/30 border-t py-12">
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
-          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <span className="font-semibold">Lensia</span>
             </div>
             <div className="text-muted-foreground flex gap-6 text-sm">
-              <Link href="#" className="hover:text-foreground transition-colors">
+              <Link href="/terminos" className="hover:text-foreground transition-colors">
                 Términos
               </Link>
-              <Link href="#" className="hover:text-foreground transition-colors">
+              <Link href="/privacidad" className="hover:text-foreground transition-colors">
                 Privacidad
               </Link>
-              <Link href="#" className="hover:text-foreground transition-colors">
+              <Link href="/contacto" className="hover:text-foreground transition-colors">
                 Contacto
               </Link>
             </div>

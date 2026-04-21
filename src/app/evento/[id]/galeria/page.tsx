@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Camera, Image as ImageIcon, ArrowLeft } from "lucide-react";
+import { Image as ImageIcon, ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,9 +10,6 @@ export default function GalleryPage({ params }: { params: { id: string } }) {
       <header className="border-border/40 bg-background/80 sticky top-0 z-50 border-b backdrop-blur-xl">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <Link href="/" className="flex items-center gap-2">
-            <div className="bg-foreground flex h-8 w-8 items-center justify-center rounded-lg">
-              <Camera className="text-background h-4 w-4" />
-            </div>
             <span className="text-lg font-semibold">Lensia</span>
           </Link>
         </nav>

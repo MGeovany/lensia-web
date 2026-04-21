@@ -1,10 +1,30 @@
 import Link from "next/link";
 
 export function Footer({ variant = "default" }: { variant?: "default" | "dashboard" }) {
-  const containerClassName =
-    variant === "dashboard" ? "w-full px-10" : "mx-auto w-full max-w-6xl px-4 lg:px-8";
-
   const year = new Date().getFullYear();
+
+  if (variant === "dashboard") {
+    return (
+      <footer className="border-t border-zinc-100 bg-white">
+        <div className="flex w-full flex-col items-center justify-between gap-2 px-6 py-4 text-xs text-zinc-500 sm:flex-row">
+          <p>© {year} Lensia</p>
+          <div className="flex items-center gap-4">
+            <Link href="/privacidad" className="hover:text-zinc-900">
+              Privacidad
+            </Link>
+            <Link href="/terminos" className="hover:text-zinc-900">
+              Términos
+            </Link>
+            <Link href="/contacto" className="hover:text-zinc-900">
+              Contacto
+            </Link>
+          </div>
+        </div>
+      </footer>
+    );
+  }
+
+  const containerClassName = "mx-auto w-full max-w-6xl px-4 lg:px-8";
 
   return (
     <footer className="border-t border-zinc-900 bg-zinc-950 text-white">
@@ -14,8 +34,8 @@ export function Footer({ variant = "default" }: { variant?: "default" | "dashboa
             <p className="text-lg font-semibold tracking-tight">Lensia</p>
             <p className="mt-3 text-sm font-medium text-white">Una selfie. Sus fotos.</p>
             <p className="mt-4 max-w-md text-sm leading-6 text-white">
-              Busqueda por rostro para fotos de eventos. Publica tu galeria, comparte un link o QR y
-              deja que cada asistente encuentre sus coincidencias.
+              Búsqueda por selfie para fotos de eventos. Publica tu galería, comparte un link o QR y
+              deja que tus clientes encuentren sus coincidencias.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-2">
@@ -50,9 +70,9 @@ export function Footer({ variant = "default" }: { variant?: "default" | "dashboa
                   Ver evento publico
                 </Link>
                 {variant === "default" ? (
-                  <a href="#pricing" className="block text-sm text-white hover:underline">
-                    Comision
-                  </a>
+                  <Link href="/#comision" className="block text-sm text-white hover:underline">
+                    Comisión
+                  </Link>
                 ) : null}
               </div>
             </div>
@@ -66,12 +86,12 @@ export function Footer({ variant = "default" }: { variant?: "default" | "dashboa
                 <p className="text-sm leading-6 text-white">
                   Controlas el tiempo online de cada evento.
                 </p>
-                <a href="#" className="block text-sm text-white hover:underline">
-                  Politica de privacidad
-                </a>
-                <a href="#" className="block text-sm text-white hover:underline">
-                  Terminos de servicio
-                </a>
+                <Link href="/privacidad" className="block text-sm text-white hover:underline">
+                  Política de privacidad
+                </Link>
+                <Link href="/terminos" className="block text-sm text-white hover:underline">
+                  Términos de servicio
+                </Link>
               </div>
             </div>
 
@@ -85,12 +105,9 @@ export function Footer({ variant = "default" }: { variant?: "default" | "dashboa
                   hola@lensia.app
                 </a>
                 <p className="text-sm text-white">20% por venta. Tu defines el precio.</p>
-                <a href="#" className="block text-sm text-white hover:underline">
-                  Centro de ayuda
-                </a>
-                <a href="#" className="block text-sm text-white hover:underline">
-                  Soporte por WhatsApp
-                </a>
+                <Link href="/contacto" className="block text-sm text-white hover:underline">
+                  Contacto
+                </Link>
               </div>
             </div>
           </div>

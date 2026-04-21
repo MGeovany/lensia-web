@@ -70,11 +70,11 @@ export default function PublicEventPage() {
       {/* Main Content */}
       <main className="mx-auto max-w-3xl px-6 py-12">
         {/* Event Info */}
-          <div className="mb-12 text-center">
-            <div className="bg-muted mb-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm">
-              <Sparkles className="h-4 w-4" />
-              <span>Búsqueda por selfie</span>
-            </div>
+        <div className="mb-12 text-center">
+          <div className="bg-muted mb-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm">
+            <Sparkles className="h-4 w-4" />
+            <span>Búsqueda por selfie</span>
+          </div>
           <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
             {eventData.name}
           </h1>
