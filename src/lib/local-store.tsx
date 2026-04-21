@@ -10,6 +10,43 @@ export type LensiaUser = {
   id: string;
   name: string;
   email: string;
+  phone?: string;
+  websiteUrl?: string;
+  bio?: string;
+};
+
+export type PayoutMethod = "none" | "bank" | "mobile-money" | "paypal";
+export type WatermarkStyle = "none" | "subtle" | "bold";
+export type SupportedLocale = "es-HN" | "es-MX" | "es-ES" | "en-US";
+
+export type LensiaSettings = {
+  brand: {
+    primaryColor: string;
+    watermarkStyle: WatermarkStyle;
+    instagramHandle?: string;
+  };
+  payout: {
+    method: PayoutMethod;
+    currency: "HNL" | "USD";
+    accountHolder?: string;
+    rtn?: string;
+    bankName?: string;
+    accountNumber?: string;
+    mobileProvider?: string;
+    mobilePhone?: string;
+    paypalEmail?: string;
+  };
+  notifications: {
+    emailNewOrder: boolean;
+    emailWeeklySummary: boolean;
+    emailProductNews: boolean;
+    whatsappNewOrder: boolean;
+  };
+  preferences: {
+    locale: SupportedLocale;
+    timezone: string;
+    dateFormat: "short" | "long";
+  };
 };
 
 export type LensiaEvent = {
@@ -68,7 +105,32 @@ export type LensiaState = {
   events: LensiaEvent[];
   photos: LensiaPhoto[];
   orders: LensiaOrder[];
+  settings: LensiaSettings;
 };
+
+function defaultSettings(): LensiaSettings {
+  return {
+    brand: {
+      primaryColor: "#18181b",
+      watermarkStyle: "subtle",
+    },
+    payout: {
+      method: "none",
+      currency: "HNL",
+    },
+    notifications: {
+      emailNewOrder: true,
+      emailWeeklySummary: false,
+      emailProductNews: false,
+      whatsappNewOrder: true,
+    },
+    preferences: {
+      locale: "es-HN",
+      timezone: "America/Tegucigalpa",
+      dateFormat: "short",
+    },
+  };
+}
 
 const STORAGE_KEY = "lensia:state:v1";
 const COMMISSION_RATE = 0.2;
@@ -244,6 +306,7 @@ function seedState(): LensiaState {
     events,
     photos: [],
     orders,
+    settings: defaultSettings(),
   };
 }
 
@@ -255,6 +318,24 @@ function readStorage(): LensiaState | null {
   } catch {
     return null;
   }
+}
+
+function migrate(stored: Partial<LensiaState>): LensiaState {
+  const seed = seedState();
+  const s = stored.settings ?? ({} as Partial<LensiaSettings>);
+  return {
+    session: stored.session ?? seed.session,
+    users: stored.users ?? seed.users,
+    events: stored.events ?? seed.events,
+    photos: stored.photos ?? seed.photos,
+    orders: stored.orders ?? seed.orders,
+    settings: {
+      brand: { ...seed.settings.brand, ...(s.brand ?? {}) },
+      payout: { ...seed.settings.payout, ...(s.payout ?? {}) },
+      notifications: { ...seed.settings.notifications, ...(s.notifications ?? {}) },
+      preferences: { ...seed.settings.preferences, ...(s.preferences ?? {}) },
+    },
+  };
 }
 
 function writeStorage(state: LensiaState) {
@@ -298,6 +379,11 @@ type LensiaActions = {
     orderId: string,
     patch: Partial<Omit<LensiaOrder, "id" | "eventId" | "createdAt">>
   ): void;
+  updateUser(patch: Partial<Omit<LensiaUser, "id">>): void;
+  updateSettings<K extends keyof LensiaSettings>(
+    section: K,
+    patch: Partial<LensiaSettings[K]>
+  ): void;
 };
 
 const LensiaContext = React.createContext<(LensiaState & { actions: LensiaActions }) | null>(null);
@@ -305,10 +391,14 @@ const LensiaContext = React.createContext<(LensiaState & { actions: LensiaAction
 export function LensiaProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = React.useState<LensiaState>(() => {
     const stored = readStorage();
-    if (stored) return stored;
-    const seeded = seedState();
-    writeStorage(seeded);
-    return seeded;
+    if (!stored) {
+      const seeded = seedState();
+      writeStorage(seeded);
+      return seeded;
+    }
+    const migrated = migrate(stored);
+    writeStorage(migrated);
+    return migrated;
   });
 
   React.useEffect(() => {
@@ -493,6 +583,21 @@ export function LensiaProvider({ children }: { children: React.ReactNode }) {
         setState((s) => ({
           ...s,
           orders: s.orders.map((o) => (o.id === orderId ? { ...o, ...patch } : o)),
+        }));
+      },
+      updateUser(patch) {
+        setState((s) => ({
+          ...s,
+          users: s.users.map((u) => (u.id === s.session.userId ? { ...u, ...patch } : u)),
+        }));
+      },
+      updateSettings(section, patch) {
+        setState((s) => ({
+          ...s,
+          settings: {
+            ...s.settings,
+            [section]: { ...s.settings[section], ...patch },
+          },
         }));
       },
     };
