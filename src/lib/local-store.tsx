@@ -19,6 +19,8 @@ export type LensiaEvent = {
   type: EventType;
   date: string; // YYYY-MM-DD
   city: string;
+  venue?: string;
+  description?: string;
   pricePerPhotoHnl: number;
   onlineDays: number;
   whatsapp: string;
@@ -335,6 +337,8 @@ export function LensiaProvider({ children }: { children: React.ReactNode }) {
               type: input.type,
               date: input.date,
               city: input.city,
+              venue: input.venue,
+              description: input.description,
               pricePerPhotoHnl: input.pricePerPhotoHnl,
               onlineDays: input.onlineDays,
               whatsapp: input.whatsapp,

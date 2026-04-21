@@ -60,15 +60,7 @@ function formatNumber(n: number) {
   return n.toLocaleString("es-HN");
 }
 
-function KpiStat({
-  label,
-  value,
-  hint,
-}: {
-  label: string;
-  value: string;
-  hint?: string;
-}) {
+function KpiStat({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
     <div className="flex flex-col gap-1 py-1">
       <p className="text-xs font-medium tracking-wide text-zinc-500 uppercase">{label}</p>
@@ -89,17 +81,14 @@ function EventRow({
 }) {
   return (
     <div className="group relative flex items-center gap-4 px-4 py-3 transition-colors hover:bg-zinc-50">
-      <span
-        aria-hidden
-        className={cn("size-2 shrink-0 rounded-full", STATUS_DOT[event.status])}
-      />
+      <span aria-hidden className={cn("size-2 shrink-0 rounded-full", STATUS_DOT[event.status])} />
 
       <Link
         href={`/dashboard/events/${event.id}/upload`}
         className="flex min-w-0 flex-1 items-center gap-4 focus-visible:outline-none"
       >
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium text-zinc-950 underline-offset-4 decoration-zinc-300 group-hover:underline">
+          <p className="truncate text-sm font-medium text-zinc-950 decoration-zinc-300 underline-offset-4 group-hover:underline">
             {event.name}
           </p>
           <p className="mt-0.5 truncate text-xs text-zinc-500">
@@ -134,7 +123,7 @@ function EventRow({
           <button
             type="button"
             aria-label={`Acciones para ${event.name}`}
-            className="inline-flex size-8 items-center justify-center rounded-md text-zinc-400 opacity-0 transition-opacity hover:bg-zinc-100 hover:text-zinc-900 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:outline-none group-hover:opacity-100 data-[state=open]:opacity-100"
+            className="inline-flex size-8 items-center justify-center rounded-md text-zinc-400 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:outline-none data-[state=open]:opacity-100"
           >
             <DotsHorizontalIcon />
           </button>
@@ -224,19 +213,12 @@ export default function DashboardPage() {
           <KpiStat label="Eventos" value={formatNumber(events.length)} />
           <KpiStat label="Fotos" value={formatNumber(totals.photos)} />
           <KpiStat label="Órdenes" value={formatNumber(totals.orders)} />
-          <KpiStat
-            label="Neto"
-            value={formatHnl(net)}
-            hint={`Bruto ${formatHnl(totals.gross)}`}
-          />
+          <KpiStat label="Neto" value={formatHnl(net)} hint={`Bruto ${formatHnl(totals.gross)}`} />
         </section>
 
         <section aria-labelledby="events-heading" className="mt-12">
           <div className="flex items-end justify-between">
-            <h2
-              id="events-heading"
-              className="text-sm font-semibold tracking-tight text-zinc-950"
-            >
+            <h2 id="events-heading" className="text-sm font-semibold tracking-tight text-zinc-950">
               Eventos
             </h2>
             <Link
@@ -259,11 +241,7 @@ export default function DashboardPage() {
               <ul className="divide-y divide-zinc-100">
                 {recentEvents.map((event) => (
                   <li key={event.id}>
-                    <EventRow
-                      event={event}
-                      onDelete={setDeleteId}
-                      onCopyLink={onCopyPublicLink}
-                    />
+                    <EventRow event={event} onDelete={setDeleteId} onCopyLink={onCopyPublicLink} />
                   </li>
                 ))}
               </ul>
@@ -273,10 +251,7 @@ export default function DashboardPage() {
 
         <section aria-labelledby="orders-heading" className="mt-12">
           <div className="flex items-end justify-between">
-            <h2
-              id="orders-heading"
-              className="text-sm font-semibold tracking-tight text-zinc-950"
-            >
+            <h2 id="orders-heading" className="text-sm font-semibold tracking-tight text-zinc-950">
               Órdenes recientes
             </h2>
             {orders.length > recentOrders.length ? (
@@ -300,7 +275,7 @@ export default function DashboardPage() {
                       className="group flex items-center gap-4 px-4 py-3 transition-colors hover:bg-zinc-50 focus-visible:outline-none"
                     >
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-zinc-950 group-hover:underline underline-offset-4 decoration-zinc-300">
+                        <p className="truncate text-sm font-medium text-zinc-950 decoration-zinc-300 underline-offset-4 group-hover:underline">
                           {order.clientName}
                         </p>
                         <p className="mt-0.5 truncate text-xs text-zinc-500">

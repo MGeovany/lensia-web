@@ -5,7 +5,7 @@ import { useState } from "react";
 import {
   ArrowRight,
   Building2,
-  CheckCircle,
+  Check,
   GraduationCap,
   Heart,
   Menu,
@@ -14,264 +14,241 @@ import {
   Shield,
   Trophy,
   Upload,
-  Users,
   X,
   Zap,
 } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+
+const NAV_LINKS = [
+  { href: "#como-funciona", label: "Cómo funciona" },
+  { href: "#por-que", label: "Por qué Lensia" },
+  { href: "#precio", label: "Precio" },
+];
+
+const STEPS = [
+  {
+    step: "01",
+    icon: Upload,
+    title: "Sube tu galería",
+    description:
+      "Arrastra la carpeta. Lensia organiza tus fotos, detecta caras y prepara todo para compartir.",
+  },
+  {
+    step: "02",
+    icon: QrCode,
+    title: "Comparte el link",
+    description:
+      "Cada evento tiene un link único y un QR listo para WhatsApp, redes o imprimir en el venue.",
+  },
+  {
+    step: "03",
+    icon: Search,
+    title: "Ellos encuentran, tú cobras",
+    description:
+      "Cada cliente sube una selfie y ve sus coincidencias. Tú recibes la solicitud y confirmas la venta.",
+  },
+];
+
+const BENEFITS = [
+  {
+    icon: Zap,
+    title: "Menos fricción, más ventas",
+    description:
+      "Cuando encontrar la foto es fácil, comprarla también. Deja de enviar álbumes por WhatsApp uno por uno.",
+  },
+  {
+    icon: Check,
+    title: "Cero configuración",
+    description:
+      "Si sabes compartir un link, sabes usar Lensia. Nada que instalar, nada que estudiar.",
+  },
+  {
+    icon: Shield,
+    title: "Privacidad por diseño",
+    description:
+      "Las selfies se usan solo para buscar y se eliminan al instante. No guardamos datos biométricos.",
+  },
+  {
+    icon: Heart,
+    title: "Tu marca, no la nuestra",
+    description:
+      "Galería personalizada con tus colores y logo. Los clientes te recuerdan a ti, no a una plataforma.",
+  },
+];
+
+const EVENT_TYPES = [
+  {
+    icon: Trophy,
+    name: "Carreras y maratones",
+    tagline: "Miles de atletas, resultados en minutos.",
+  },
+  {
+    icon: GraduationCap,
+    name: "Graduaciones",
+    tagline: "Cada familia encuentra su foto sola.",
+  },
+  {
+    icon: Heart,
+    name: "Bodas y celebraciones",
+    tagline: "Invitados que no esperan el álbum.",
+  },
+  {
+    icon: Building2,
+    name: "Eventos corporativos",
+    tagline: "Cobertura con entrega inmediata.",
+  },
+];
+
+const PRICING_BULLETS = [
+  "Sin contratos ni permanencia",
+  "Sin costo de setup por evento",
+  "Retiros cuando los pidas",
+  "Tú controlas el tiempo online",
+];
 
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="bg-background min-h-screen">
-      {/* Navigation */}
-      <header className="border-border/40 bg-background/80 sticky top-0 z-50 border-b backdrop-blur-xl">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl font-semibold tracking-tight">Lensia</span>
+    <div className="bg-background text-foreground min-h-screen">
+      {/* Nav */}
+      <header className="border-border/60 bg-background/80 sticky top-0 z-50 border-b backdrop-blur-md">
+        <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
+          <Link href="/" className="text-[15px] font-semibold tracking-tight">
+            Lensia
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden items-center gap-8 md:flex">
-            <Link
-              href="#como-funciona"
-              className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-            >
-              Cómo funciona
-            </Link>
-            <Link
-              href="#comision"
-              className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-            >
-              Comisión
-            </Link>
-            <Link
-              href="#eventos"
-              className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-            >
-              Eventos
-            </Link>
+          <div className="hidden items-center gap-7 md:flex">
+            {NAV_LINKS.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+              >
+                {l.label}
+              </Link>
+            ))}
           </div>
 
-          <div className="hidden items-center gap-3 md:flex">
+          <div className="hidden items-center gap-2 md:flex">
             <Button variant="ghost" size="sm" asChild>
               <Link href="/login">Iniciar sesión</Link>
             </Button>
             <Button size="sm" asChild>
-              <Link href="/dashboard">Empezar gratis</Link>
+              <Link href="/dashboard">Empezar</Link>
             </Button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          <button
+            type="button"
+            aria-label="Abrir menú"
+            aria-expanded={mobileMenuOpen}
+            onClick={() => setMobileMenuOpen((v) => !v)}
+            className="hover:bg-accent inline-flex size-9 items-center justify-center rounded-md transition-colors md:hidden"
           >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
+            {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
         </nav>
 
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="border-border/40 bg-background border-t px-6 py-4 md:hidden">
-            <div className="flex flex-col gap-4">
-              <Link href="#como-funciona" className="text-muted-foreground text-sm">
-                Cómo funciona
-              </Link>
-              <Link href="#comision" className="text-muted-foreground text-sm">
-                Comisión
-              </Link>
-              <Link href="#eventos" className="text-muted-foreground text-sm">
-                Eventos
-              </Link>
-              <div className="flex flex-col gap-2 pt-4">
+        {mobileMenuOpen ? (
+          <div className="border-border/60 bg-background border-t px-6 py-4 md:hidden">
+            <div className="flex flex-col gap-3">
+              {NAV_LINKS.map((l) => (
+                <Link key={l.href} href={l.href} className="text-muted-foreground text-sm">
+                  {l.label}
+                </Link>
+              ))}
+              <div className="mt-2 grid gap-2">
                 <Button variant="outline" size="sm" asChild>
                   <Link href="/login">Iniciar sesión</Link>
                 </Button>
                 <Button size="sm" asChild>
-                  <Link href="/dashboard">Empezar gratis</Link>
+                  <Link href="/dashboard">Empezar</Link>
                 </Button>
               </div>
             </div>
           </div>
-        )}
+        ) : null}
       </header>
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="from-muted/50 via-background to-background absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))]" />
-        <div className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:py-40">
-          <div className="mx-auto max-w-3xl text-center">
-            <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
-              Encuentra y vende fotos de eventos con una selfie
-            </h1>
-            <p className="text-muted-foreground mt-6 text-lg leading-relaxed text-pretty sm:text-xl">
-              Sube las fotos de tu evento, comparte un link y deja que tus clientes encuentren sus
-              fotos en segundos con una selfie.
-            </p>
-            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Button size="lg" className="w-full sm:w-auto" asChild>
-                <Link href="/dashboard">
-                  Crear mi primer evento
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button variant="outline" size="lg" className="w-full sm:w-auto" asChild>
-                <Link href="/evento/1">Ver ejemplo</Link>
-              </Button>
-            </div>
-            <p className="text-muted-foreground mt-4 text-sm">
-              Sin tarjeta de crédito • Sin suscripción
-            </p>
+      {/* Hero */}
+      <section className="mx-auto max-w-5xl px-6 pt-20 pb-16 sm:pt-28 sm:pb-24">
+        <div className="mx-auto max-w-3xl text-center">
+          <span className="border-border text-muted-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs">
+            <span className="size-1.5 rounded-full bg-emerald-500" />
+            Búsqueda por selfie · Resultados en segundos
+          </span>
+          <h1 className="mt-6 text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
+            Una selfie. Sus fotos.
+          </h1>
+          <p className="text-muted-foreground mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-pretty sm:text-base">
+            Publica la galería de tu evento, comparte un link y deja que cada persona encuentre sus
+            coincidencias. Tú fotografías; Lensia se encarga del resto.
+          </p>
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Button size="lg" asChild>
+              <Link href="/dashboard">
+                Empezar gratis
+                <ArrowRight className="size-4" />
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" asChild>
+              <Link href="#como-funciona">Cómo funciona</Link>
+            </Button>
           </div>
+          <p className="text-muted-foreground mt-4 text-xs">
+            Sin tarjeta · Sin suscripción · 20% solo cuando vendes
+          </p>
+        </div>
 
-          {/* Hero Visual */}
-          <div className="relative mx-auto mt-16 max-w-5xl">
-            <div className="border-border/50 bg-card rounded-2xl border p-2 shadow-2xl shadow-black/5">
-              <div className="bg-muted aspect-video overflow-hidden rounded-xl">
-                <div className="flex h-full items-center justify-center">
-                  <div className="grid grid-cols-3 gap-3 p-8 sm:grid-cols-4 md:grid-cols-6">
-                    {Array.from({ length: 12 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="from-muted-foreground/10 to-muted-foreground/5 aspect-square rounded-lg bg-gradient-to-br"
-                      />
-                    ))}
-                  </div>
-                </div>
+        {/* Hero visual */}
+        <div className="relative mx-auto mt-16 max-w-4xl">
+          <div className="border-border bg-card rounded-xl border p-2 shadow-sm">
+            <div className="bg-muted/70 aspect-video overflow-hidden rounded-lg">
+              <div className="grid h-full grid-cols-6 gap-2 p-6">
+                {Array.from({ length: 18 }, (_, i) => `ph-${i}`).map((id) => (
+                  <div key={id} className="bg-foreground/5 aspect-square rounded-md" />
+                ))}
               </div>
             </div>
-            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 transform">
-              <div className="border-border bg-background flex items-center gap-2 rounded-full border px-4 py-2 shadow-lg">
-                <div className="bg-muted h-8 w-8 rounded-full" />
-                <span className="text-sm font-medium">12 fotos encontradas</span>
-                <CheckCircle className="h-4 w-4 text-green-600" />
-              </div>
+          </div>
+          <div className="absolute -bottom-5 left-1/2 -translate-x-1/2">
+            <div className="border-border bg-background flex items-center gap-2 rounded-full border px-3 py-1.5 shadow-sm">
+              <span className="size-1.5 rounded-full bg-emerald-500" />
+              <span className="text-xs font-medium">12 fotos encontradas</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How it Works */}
-      <section id="como-funciona" className="border-border/40 bg-muted/30 border-t py-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Así de simple funciona
-            </h2>
-            <p className="text-muted-foreground mt-4 text-lg">
-              Tres pasos para transformar la entrega de fotos de tus eventos
+      {/* How it works */}
+      <section id="como-funciona" className="border-border/60 bg-muted/30 border-y">
+        <div className="mx-auto max-w-5xl px-6 py-20">
+          <div className="max-w-xl">
+            <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+              Cómo funciona
             </p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
+              Tres pasos. Cero fricción.
+            </h2>
           </div>
 
-          <div className="mt-16 grid gap-8 sm:grid-cols-3">
-            {[
-              {
-                icon: Upload,
-                step: "01",
-                title: "Sube tus fotos",
-                description:
-                  "Arrastra y suelta las fotos de tu evento. Lensia las organiza en una galeria lista para compartir.",
-              },
-              {
-                icon: QrCode,
-                step: "02",
-                title: "Comparte el link",
-                description:
-                  "Genera un QR o link único para tu evento. Compártelo en redes, WhatsApp o impreso en el venue.",
-              },
-              {
-                icon: Search,
-                step: "03",
-                title: "Tus clientes buscan",
-                description:
-                  "Cada persona sube una selfie y ve coincidencias sugeridas. Tu recibes las solicitudes de compra.",
-              },
-            ].map((item) => (
-              <Card key={item.step} className="border-border/50 bg-card relative overflow-hidden">
-                <CardContent className="p-8">
-                  <span className="text-muted absolute top-6 right-6 text-6xl font-bold">
-                    {item.step}
+          <div className="mt-12 grid gap-10 sm:grid-cols-3">
+            {STEPS.map((s) => (
+              <div key={s.step}>
+                <div className="flex items-center gap-3">
+                  <span className="text-muted-foreground font-mono text-xs tracking-wider">
+                    {s.step}
                   </span>
-                  <div className="bg-foreground mb-6 flex h-12 w-12 items-center justify-center rounded-xl">
-                    <item.icon className="text-background h-6 w-6" />
-                  </div>
-                  <h3 className="text-xl font-semibold">{item.title}</h3>
-                  <p className="text-muted-foreground mt-3 leading-relaxed">{item.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits */}
-      <section className="py-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Por qué los fotógrafos eligen Lensia
-            </h2>
-            <p className="text-muted-foreground mt-4 text-lg">
-              Ahorra tiempo, vende más y ofrece una experiencia increíble
-            </p>
-          </div>
-
-          <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                icon: Zap,
-                title: "Ahorra horas de trabajo",
-                description:
-                  "Olvídate de organizar y enviar fotos manualmente. Tus clientes encuentran las suyas solos.",
-              },
-              {
-                icon: Users,
-                title: "Más ventas, menos esfuerzo",
-                description:
-                  "Cuando es fácil encontrar sus fotos, más personas las compran. Así de simple.",
-              },
-              {
-                icon: Shield,
-                title: "Privacidad garantizada",
-                description:
-                  "Las selfies solo se usan para la búsqueda y se eliminan inmediatamente después.",
-              },
-              {
-                icon: QrCode,
-                title: "Tu marca, tu estilo",
-                description:
-                  "Personaliza la galería con tu logo y colores. Los clientes te recuerdan.",
-              },
-              {
-                icon: CheckCircle,
-                title: "Sin conocimientos técnicos",
-                description:
-                  "Si puedes subir una foto a WhatsApp, puedes usar Lensia. Es así de fácil.",
-              },
-              {
-                icon: Search,
-                title: "Busqueda por selfie",
-                description:
-                  "Tus clientes suben una selfie y ven coincidencias sugeridas dentro del evento.",
-              },
-            ].map((benefit) => (
-              <div
-                key={benefit.title}
-                className="group border-border/50 bg-card hover:border-border rounded-2xl border p-6 transition-all hover:shadow-lg"
-              >
-                <div className="bg-muted mb-4 flex h-10 w-10 items-center justify-center rounded-lg">
-                  <benefit.icon className="text-foreground h-5 w-5" />
+                  <span className="bg-border h-px flex-1" />
                 </div>
-                <h3 className="font-semibold">{benefit.title}</h3>
+                <div className="bg-foreground mt-6 flex size-10 items-center justify-center rounded-lg">
+                  <s.icon className="text-background size-5" />
+                </div>
+                <h3 className="mt-5 font-semibold">{s.title}</h3>
                 <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
-                  {benefit.description}
+                  {s.description}
                 </p>
               </div>
             ))}
@@ -279,278 +256,161 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Event Types */}
-      <section id="eventos" className="border-border/40 bg-muted/30 border-t py-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Perfecto para todo tipo de eventos
-            </h2>
-            <p className="text-muted-foreground mt-4 text-lg">
-              Desde carreras hasta bodas, Lensia se adapta a cualquier ocasión
+      {/* Why Lensia */}
+      <section id="por-que" className="mx-auto max-w-5xl px-6 py-20">
+        <div className="max-w-xl">
+          <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+            Por qué Lensia
+          </p>
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
+            Menos envíos manuales. Más ventas.
+          </h2>
+        </div>
+
+        <div className="mt-12 grid gap-4 sm:grid-cols-2">
+          {BENEFITS.map((b) => (
+            <div
+              key={b.title}
+              className="border-border/70 bg-card hover:border-border rounded-xl border p-6 transition-colors"
+            >
+              <div className="bg-muted flex size-9 items-center justify-center rounded-lg">
+                <b.icon className="size-4" />
+              </div>
+              <h3 className="mt-4 font-semibold">{b.title}</h3>
+              <p className="text-muted-foreground mt-2 text-sm leading-relaxed">{b.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Event types */}
+      <section id="eventos" className="border-border/60 bg-muted/30 border-y">
+        <div className="mx-auto max-w-5xl px-6 py-20">
+          <div className="max-w-xl">
+            <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+              Para cualquier evento
             </p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
+              De un 10K a una boda.
+            </h2>
           </div>
 
-          <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              {
-                icon: Trophy,
-                name: "Carreras y maratones",
-                example: "Carrera 10K San Pedro Sula",
-                tag: "Deporte",
-                tint: "from-emerald-500/15 via-transparent to-transparent dark:from-emerald-400/10",
-                iconBg: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-200",
-              },
-              {
-                icon: GraduationCap,
-                name: "Graduaciones",
-                example: "Graduación Unitec 2026",
-                tag: "Academia",
-                tint: "from-sky-500/15 via-transparent to-transparent dark:from-sky-400/10",
-                iconBg: "bg-sky-500/10 text-sky-700 dark:text-sky-200",
-              },
-              {
-                icon: Heart,
-                name: "Bodas y celebraciones",
-                example: "Boda Ana & Luis",
-                tag: "Social",
-                tint: "from-rose-500/15 via-transparent to-transparent dark:from-rose-400/10",
-                iconBg: "bg-rose-500/10 text-rose-700 dark:text-rose-200",
-              },
-              {
-                icon: Building2,
-                name: "Eventos corporativos",
-                example: "Conferencia TechHN 2026",
-                tag: "Marca",
-                tint: "from-violet-500/15 via-transparent to-transparent dark:from-violet-400/10",
-                iconBg: "bg-violet-500/10 text-violet-700 dark:text-violet-200",
-              },
-            ].map((event) => (
-              <Card
-                key={event.name}
-                className="group border-border/50 bg-card/70 hover:border-border relative overflow-hidden py-0 transition-all hover:-translate-y-0.5"
+          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {EVENT_TYPES.map((e) => (
+              <div
+                key={e.name}
+                className="border-border/70 bg-card hover:border-border rounded-xl border p-5 transition-colors"
               >
-                <div
-                  className={`pointer-events-none absolute -inset-px bg-gradient-to-br ${event.tint}`}
-                />
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(0,0,0,0.07)_1px,transparent_0)] [background-size:18px_18px] opacity-20 dark:opacity-10" />
-                <CardContent className="relative p-6">
-                  <div className="flex items-start justify-between gap-4">
-                    <div
-                      className={`border-border/60 flex h-12 w-12 items-center justify-center rounded-xl border ${event.iconBg}`}
-                    >
-                      <event.icon className="h-6 w-6" />
-                    </div>
-                    <Badge variant="outline" className="bg-background/60">
-                      {event.tag}
-                    </Badge>
-                  </div>
-                  <h3 className="mt-6 font-semibold">{event.name}</h3>
-                  <p className="text-muted-foreground mt-1 text-sm">{event.example}</p>
-                  <div className="text-muted-foreground mt-6 flex items-center gap-2 text-xs">
-                    <span className="inline-flex items-center gap-2">
-                      <span className="bg-foreground/30 h-1.5 w-1.5 rounded-full" />
-                      Link compartible
-                    </span>
-                    <span className="bg-foreground/20 h-1 w-1 rounded-full" />
-                    <span className="inline-flex items-center gap-2">
-                      <span className="bg-foreground/30 h-1.5 w-1.5 rounded-full" />
-                      Venta por foto
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
+                <div className="bg-muted flex size-9 items-center justify-center rounded-lg">
+                  <e.icon className="size-4" />
+                </div>
+                <p className="mt-4 leading-tight font-semibold">{e.name}</p>
+                <p className="text-muted-foreground mt-2 text-sm leading-relaxed">{e.tagline}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Privacy Section */}
-      <section className="py-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mx-auto max-w-3xl">
-            <Card className="border-border/50 bg-card overflow-hidden">
-              <CardContent className="p-0">
-                <div className="grid lg:grid-cols-2">
-                  <div className="p-8 lg:p-12">
-                    <div className="bg-foreground mb-6 flex h-12 w-12 items-center justify-center rounded-xl">
-                      <Shield className="text-background h-6 w-6" />
-                    </div>
-                    <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-                      Tu privacidad es nuestra prioridad
-                    </h2>
-                    <p className="text-muted-foreground mt-4 leading-relaxed">
-                      Las selfies que suben las personas se usan únicamente para la búsqueda y se
-                      eliminan inmediatamente después. No almacenamos datos biométricos ni
-                      compartimos información con terceros.
-                    </p>
-                    <ul className="mt-6 space-y-3">
-                      {[
-                        "Selfies eliminadas después de cada búsqueda",
-                        "Uso limitado a la búsqueda en el evento",
-                        "No vendemos tu información",
-                        "Soporte para solicitudes de eliminación",
-                      ].map((item) => (
-                        <li key={item} className="flex items-center gap-3 text-sm">
-                          <CheckCircle className="h-4 w-4 flex-shrink-0 text-green-600" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="bg-muted/50 flex items-center justify-center p-8 lg:p-12">
-                    <div className="relative">
-                      <div className="border-background bg-muted h-48 w-48 rounded-full border-4 shadow-xl" />
-                      <div className="border-background absolute -right-2 -bottom-2 rounded-full border-2 bg-green-600 p-2">
-                        <Shield className="h-4 w-4 text-white" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Commission */}
-      <section id="comision" className="border-border/40 bg-muted/30 border-t py-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Ganamos cuando tú ganas
+      {/* Pricing */}
+      <section id="precio" className="mx-auto max-w-5xl px-6 py-20">
+        <div className="mx-auto max-w-3xl">
+          <div className="mx-auto max-w-xl text-center">
+            <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+              Precio
+            </p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
+              Gratis hasta que vendas.
             </h2>
-            <p className="text-muted-foreground mt-4 text-lg">
-              No te cobramos nada adicional. Simplemente ganamos cuando tú vendes.
+            <p className="text-muted-foreground mt-4 text-[15px] leading-relaxed">
+              20% sobre cada venta confirmada. Sin suscripción, sin setup, sin mínimos. Si no
+              vendes, no pagas.
             </p>
           </div>
 
-          <div className="mx-auto mt-16 grid max-w-4xl gap-8 lg:grid-cols-2">
-            <Card className="border-border/50 bg-card">
-              <CardContent className="p-8">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-lg font-semibold">Comisión del 20%</h3>
-                    <p className="text-muted-foreground mt-1 text-sm">
-                      Tú defines el precio por foto. Nosotros tomamos el 20% de cada venta.
-                    </p>
-                  </div>
-                  <Badge className="bg-foreground text-background">20%</Badge>
-                </div>
+          <div className="border-border bg-card mt-10 rounded-xl border p-6 sm:p-8">
+            <p className="text-muted-foreground text-xs">Ejemplo por foto</p>
+            <div className="sm:divide-border mt-4 grid gap-6 sm:grid-cols-3 sm:gap-0 sm:divide-x">
+              <div className="sm:pr-8">
+                <p className="text-muted-foreground text-xs tracking-wide uppercase">Tú defines</p>
+                <p className="mt-2 text-2xl font-semibold tabular-nums">L 80</p>
+                <p className="text-muted-foreground mt-1 text-xs">precio por foto</p>
+              </div>
+              <div className="sm:px-8">
+                <p className="text-muted-foreground text-xs tracking-wide uppercase">Comisión</p>
+                <p className="mt-2 text-2xl font-semibold tabular-nums">L 16</p>
+                <p className="text-muted-foreground mt-1 text-xs">20% por venta</p>
+              </div>
+              <div className="sm:pl-8">
+                <p className="text-muted-foreground text-xs tracking-wide uppercase">Recibes</p>
+                <p className="mt-2 text-2xl font-semibold tabular-nums">L 64</p>
+                <p className="text-muted-foreground mt-1 text-xs">directo a tu cuenta</p>
+              </div>
+            </div>
 
-                <div className="border-border/60 bg-background/60 mt-6 rounded-xl border p-5">
-                  <div className="flex items-baseline justify-between">
-                    <span className="text-muted-foreground text-sm">Ejemplo</span>
-                    <span className="text-muted-foreground text-sm">Por foto</span>
-                  </div>
-                  <div className="mt-3 grid grid-cols-3 gap-4 text-sm">
-                    <div>
-                      <div className="text-muted-foreground">Precio</div>
-                      <div className="mt-1 font-semibold">$5.00</div>
-                    </div>
-                    <div>
-                      <div className="text-muted-foreground">Comisión</div>
-                      <div className="mt-1 font-semibold">$1.00</div>
-                    </div>
-                    <div>
-                      <div className="text-muted-foreground">Recibes</div>
-                      <div className="mt-1 font-semibold">$4.00</div>
-                    </div>
-                  </div>
-                </div>
+            <ul className="border-border mt-8 grid gap-3 border-t pt-6 sm:grid-cols-2">
+              {PRICING_BULLETS.map((i) => (
+                <li key={i} className="flex items-center gap-2 text-sm">
+                  <Check className="size-4 text-emerald-600" />
+                  <span>{i}</span>
+                </li>
+              ))}
+            </ul>
 
-                <ul className="mt-8 space-y-3">
-                  {[
-                    "Sin suscripción ni contratos",
-                    "Sin costo de configuración",
-                    "Sin cobros extra por evento",
-                    "Te quedas con el control del precio",
-                  ].map((item) => (
-                    <li key={item} className="flex items-center gap-3 text-sm">
-                      <CheckCircle className="h-4 w-4 flex-shrink-0 text-green-600" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="border-border/50 bg-card">
-              <CardContent className="p-8">
-                <h3 className="text-lg font-semibold">Empieza hoy</h3>
-                <p className="text-muted-foreground mt-1 text-sm">
-                  Crea tu evento, sube tus fotos y comparte el link. Si hay ventas, nos va bien a
-                  ambos.
-                </p>
-                <div className="mt-8 grid gap-3">
-                  <Button asChild>
-                    <Link href="/dashboard">Crear mi primer evento</Link>
-                  </Button>
-                  <Button variant="outline" asChild>
-                    <Link href="#como-funciona">Ver cómo funciona</Link>
-                  </Button>
-                </div>
-
-                <div className="border-border/60 bg-muted/40 mt-8 rounded-xl border p-5 text-sm">
-                  <div className="font-medium">Transparencia</div>
-                  <div className="text-muted-foreground mt-2">
-                    La comisión se aplica solo a ventas completadas. Si no vendes, no pagas.
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Transforma la forma en que entregas fotos
-            </h2>
-            <p className="text-muted-foreground mt-4 text-lg">
-              Convierte tus galerías en una experiencia rápida para tus clientes y en ventas para
-              ti.
-            </p>
-            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Button size="lg" asChild>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Button asChild>
                 <Link href="/dashboard">
                   Crear mi primer evento
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="size-4" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" asChild>
-                <Link href="/evento/1">Ver ejemplo</Link>
+              <Button variant="outline" asChild>
+                <Link href="#como-funciona">Ver cómo funciona</Link>
               </Button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="border-border/60 border-t">
+        <div className="mx-auto max-w-3xl px-6 py-20 text-center">
+          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+            Publica tu próximo evento en 5 minutos.
+          </h2>
+          <p className="text-muted-foreground mt-4 text-[15px]">
+            Crea la galería, comparte el link y deja que cada cliente haga el resto.
+          </p>
+          <div className="mt-8 flex justify-center">
+            <Button size="lg" asChild>
+              <Link href="/dashboard">
+                Empezar gratis
+                <ArrowRight className="size-4" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-border/40 bg-muted/30 border-t py-12">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
-            <div className="flex items-center gap-2">
-              <span className="font-semibold">Lensia</span>
-            </div>
-            <div className="text-muted-foreground flex gap-6 text-sm">
-              <Link href="/terminos" className="hover:text-foreground transition-colors">
-                Términos
-              </Link>
-              <Link href="/privacidad" className="hover:text-foreground transition-colors">
-                Privacidad
-              </Link>
-              <Link href="/contacto" className="hover:text-foreground transition-colors">
-                Contacto
-              </Link>
-            </div>
-            <p className="text-muted-foreground text-sm">
-              © 2026 Lensia. Todos los derechos reservados.
-            </p>
+      <footer className="border-border/60 border-t">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 sm:flex-row">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold">Lensia</span>
+            <span className="text-muted-foreground text-xs">· Una selfie. Sus fotos.</span>
           </div>
+          <div className="text-muted-foreground flex gap-6 text-xs">
+            <Link href="/terminos" className="hover:text-foreground transition-colors">
+              Términos
+            </Link>
+            <Link href="/privacidad" className="hover:text-foreground transition-colors">
+              Privacidad
+            </Link>
+            <Link href="/contacto" className="hover:text-foreground transition-colors">
+              Contacto
+            </Link>
+          </div>
+          <p className="text-muted-foreground text-xs">© 2026 Lensia</p>
         </div>
       </footer>
     </div>

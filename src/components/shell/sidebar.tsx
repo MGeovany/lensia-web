@@ -77,8 +77,7 @@ function UserPill() {
 export function Sidebar() {
   const pathname = usePathname();
 
-  const activeId: NavId =
-    pathname?.startsWith("/dashboard/events/new") ? "new" : "home";
+  const activeId: NavId = pathname?.startsWith("/dashboard/events/new") ? "new" : "home";
 
   return (
     <aside className="hidden lg:flex lg:w-60 lg:flex-col lg:border-r lg:border-zinc-200 lg:bg-white">
